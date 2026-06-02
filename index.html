@@ -393,6 +393,68 @@ footer p { font-size: 12px; color: var(--text-dim); }
 footer a { color: var(--text-muted); text-decoration: none; }
 footer a:hover { color: var(--purple-light); }
 
+/* ============ ANNOUNCEMENT BAR & HIGHER-CONVERTING CUSTOM STYLES ============ */
+.announcement-bar {
+  position: fixed; top: 0; left: 0; right: 0; height: 40px; z-index: 101;
+  background: linear-gradient(90deg, #7C3AED, #FF6B35);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; color: #fff; letter-spacing: 0.5px;
+  box-shadow: 0 4px 15px rgba(124,58,237,0.15);
+}
+.announcement-bar span {
+  background: rgba(255,255,255,0.2); padding: 2px 8px; border-radius: 4px;
+  margin-right: 8px; font-size: 11px; text-transform: uppercase;
+}
+nav { top: 40px !important; }
+.hero { padding: 180px 0 80px !important; }
+
+.comp-grid {
+  display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items: center; margin-bottom: 40px;
+}
+.comp-table {
+  width: 100%; border-collapse: collapse; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+}
+.comp-table th {
+  background: rgba(124,58,237,.1); padding: 16px; text-align: left; color: #fff; font-weight: 700; font-size: 14px; border-bottom: 1px solid var(--border);
+}
+.comp-table td {
+  padding: 16px; border-bottom: 1px solid rgba(255,255,255,.03); font-size: 14px;
+}
+.comp-table tr:last-child td { border: none; }
+.comp-table .check { color: #3fb950; font-weight: bold; }
+.comp-table .cross { color: #ef4444; font-weight: bold; }
+.comp-savings-box {
+  background: linear-gradient(135deg, rgba(124,58,237,.1), rgba(255,107,53,.1));
+  border: 1px solid rgba(255,107,53,.2); border-radius: 14px; padding: 32px; text-align: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,.4);
+}
+.comp-savings-box h3 { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 8px; }
+.comp-savings-box p { font-size: 14px; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px; }
+.comp-savings-box .savings-amount { font-size: 40px; font-weight: 900; color: var(--gold); }
+.comp-savings-box .savings-lbl { font-size: 12px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
+
+.bonus-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 60px;
+}
+.bonus-card {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 28px; position: relative; overflow: hidden;
+}
+.bonus-card::before {
+  content: 'LAUNCH BONUS'; position: absolute; top: 12px; right: -35px; transform: rotate(45deg);
+  background: var(--gold); color: #09060f; font-size: 8px; font-weight: 850; padding: 4px 30px; letter-spacing: 0.5px;
+}
+.bonus-card .badge-val {
+  display: inline-block; background: rgba(245,158,11,.1); border: 1px solid rgba(245,158,11,.2);
+  color: var(--gold); font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; margin-bottom: 12px;
+}
+.bonus-card h3 { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+.bonus-card p { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+@media(max-width:900px) {
+  .comp-grid, .bonus-grid { grid-template-columns: 1fr; }
+  .pricing-card.featured { transform: none; }
+}
+
 /* ============ RESPONSIVE ============ */
 @media(max-width:900px) {
   .hero-grid, .problem-grid, .solution-grid { grid-template-columns: 1fr; gap: 40px; }
@@ -416,6 +478,10 @@ footer a:hover { color: var(--purple-light); }
 </style>
 </head>
 <body>
+
+<div class="announcement-bar">
+  <span>LAUNCH SPECIAL</span> Get Lifetime Access with ZERO Monthly Subscription Fees. Launch Discount Active!
+</div>
 
 <nav>
   <div class="container">
@@ -460,7 +526,7 @@ footer a:hover { color: var(--purple-light); }
           <div class="terminal-header">
             <div class="terminal-dot"></div>
             <div class="terminal-dot"></div>
-            <div class="terminal-dot"></div>
+            <div class="terminal-dot active-pulse"></div>
             <div class="terminal-title">Suno API Pro — Terminal</div>
           </div>
           <div class="terminal-body">
@@ -858,6 +924,96 @@ footer a:hover { color: var(--purple-light); }
           <div class="avatar">AT</div>
           <div><div class="name">Alex T.</div><div class="title">Agency Owner</div></div>
         </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-glow section-dots">
+  <div class="container">
+    <div class="section-header">
+      <span class="badge">💰 UNBEATABLE VALUE COMPARISON</span>
+      <h2 style="margin-top:12px">Stop Paying <span>High Monthly Fees</span></h2>
+      <p style="color:var(--text-muted)">Contrast the numbers. Suno API Pro delivers standard/extended enterprise REST capabilities at a fraction of the cost.</p>
+    </div>
+    
+    <div class="comp-grid fade-in">
+      <div>
+        <table class="comp-table">
+          <thead>
+            <tr>
+              <th>Capability</th>
+              <th>Typical SaaS API Wrappers</th>
+              <th>Suno API Pro Gateway</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Pricing Model</strong></td>
+              <td class="cross">Monthly Subscription ($49 - $99/mo)</td>
+              <td class="check">One-Time Lifetime Access ($21)</td>
+            </tr>
+            <tr>
+              <td><strong>API Speed / Limits</strong></td>
+              <td class="cross">Throttled by cloud limits</td>
+              <td class="check">Fully configurable via custom hardware</td>
+            </tr>
+            <tr>
+              <td><strong>Accounts Supported</strong></td>
+              <td class="cross">1 Account strictly</td>
+              <td class="check">Unlimited Accounts (Pro Tier)</td>
+            </tr>
+            <tr>
+              <td><strong>Credentials Privacy</strong></td>
+              <td class="cross">Stored on their cloud database</td>
+              <td class="check">100% private on your own machine/VPS</td>
+            </tr>
+            <tr>
+              <td><strong>Key Rotation</strong></td>
+              <td class="cross">Manual dashboard requests</td>
+              <td class="check">Create, rotate, revoke instantly</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <div class="comp-savings-box">
+        <h3>Massive Lifetime Savings</h3>
+        <p>Avoid expensive subscriptions and keep 100% of your earnings. Calculate your yearly savings when self-hosting:</p>
+        <div class="savings-amount">$1,188</div>
+        <div class="savings-lbl">Saved Every Single Year</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-header">
+      <span class="badge">🎁 LIMITED-TIME LAUNCH BONUSES</span>
+      <h2 style="margin-top:12px">Fast-Action <span>Free Bonuses</span> Included</h2>
+      <p style="color:var(--text-muted)">Get instant access to these professional growth modules if you purchase during the launch window!</p>
+    </div>
+    
+    <div class="bonus-grid">
+      <div class="bonus-card fade-in">
+        <div class="badge-val">WORTH $47</div>
+        <h3>Bonus 1: Complete Postman API Collection</h3>
+        <p>Ready-to-run Postman collection containing all 12 API endpoints. Import with one click and start testing instantly with zero setup!</p>
+      </div>
+      
+      <div class="bonus-card fade-in">
+        <div class="badge-val">WORTH $97</div>
+        <h3>Bonus 2: 5 Pre-Built Integration Templates</h3>
+        <p>Ready-made automation scripts in Python, Node.js, PHP, curl, and Go. Copy and paste to connect Suno to your SaaS, app, or bots immediately.</p>
+      </div>
+      
+      <div class="bonus-card fade-in">
+        <div class="badge-val">WORTH $153</div>
+        <h3>Bonus 3: White-Label Reseller Contract Template</h3>
+        <p>Want to sell API access to high-ticket clients? Use our pre-written agency proposal template to pitch and close deals worth $500+/month.</p>
       </div>
     </div>
   </div>
