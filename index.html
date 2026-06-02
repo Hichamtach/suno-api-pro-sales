@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Suno API Pro — Turn Your Suno Account Into a REST API</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #09060f; color: #e0dce8; overflow-x: hidden;
+}
+a { text-decoration: none; }
+.container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+/* ============ COLORS ============ */
+:root {
+  --purple: #7C3AED;
+  --purple-light: #A78BFA;
+  --purple-dark: #5B21B6;
+  --gold: #F59E0B;
+  --gold-light: #FCD34D;
+  --gold-dark: #D97706;
+  --orange: #FF6B35;
+  --orange-light: #FF9A6C;
+  --orange-dark: #E55A2B;
+  --bg: #09060f;
+  --bg-alt: #0b0718;
+  --bg-card: #0e0a1a;
+  --bg-terminal: #0c0820;
+  --border: rgba(124,58,237,.15);
+  --border-hover: rgba(124,58,237,.3);
+  --text: #e0dce8;
+  --text-muted: #8b83a0;
+  --text-dim: #5c5470;
+  --glow-purple: rgba(124,58,237,.25);
+  --glow-gold: rgba(245,158,11,.2);
+}
+
+/* ============ NAV ============ */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(9,6,15,.88); backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border); padding: 14px 0;
+}
+nav .container { display: flex; align-items: center; justify-content: space-between; }
+.logo { font-weight: 800; font-size: 20px; color: #fff; display: flex; align-items: center; gap: 8px; }
+.logo svg { width: 22px; height: 22px; }
+.logo span { color: var(--gold); }
+nav .btn { font-size: 13px; padding: 8px 20px; }
+
+/* ============ BUTTONS ============ */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 14px 32px; border-radius: 10px; font-weight: 600;
+  font-size: 15px; cursor: pointer; border: none;
+  transition: all .25s; text-decoration: none; font-family: inherit;
+}
+.btn-primary {
+  background: var(--purple);
+  color: #fff; cursor: pointer;
+}
+.btn-glow { position: relative; }
+.btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
+.btn-gold { background: var(--gold); color: #09060f; }
+.btn-primary-lg {
+  padding: 14px 32px; font-size: 15px;
+  background: var(--purple);
+  color: #fff; animation: pulse-glow 2.5s infinite;
+}
+@keyframes pulse-glow {
+  0%,100% { box-shadow: 0 0 40px var(--glow-purple), 0 4px 20px var(--glow-purple); }
+  50% { box-shadow: 0 0 60px rgba(124,58,237,.35), 0 6px 30px rgba(124,58,237,.45); }
+}
+
+/* ============ HERO ============ */
+.hero {
+  padding: 140px 0 80px; position: relative; overflow: hidden;
+  background: var(--bg);
+}
+.hero::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: var(--border);
+}
+.hero-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+.hero .badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(255,107,53,.1); border: 1px solid rgba(255,107,53,.2);
+  padding: 6px 14px; border-radius: 20px; font-size: 12px; color: var(--gold); font-weight: 500; margin-bottom: 20px;
+}
+.hero h1 { font-size: 48px; font-weight: 900; line-height: 1.1; color: #fff; margin-bottom: 16px; }
+.hero h1 span {
+  color: var(--purple-light);
+}
+.hero p { font-size: 18px; color: var(--text-muted); line-height: 1.7; margin-bottom: 28px; max-width: 520px; }
+.hero .cta-group { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+.hero .trust { font-size: 13px; color: var(--text-dim); display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.hero .trust span { display: flex; align-items: center; gap: 4px; }
+.hero .trust svg { width: 14px; height: 14px; stroke: var(--orange); }
+
+/* Terminal */
+.hero-visual { position: relative; display: flex; align-items: center; justify-content: center; }
+.hero-terminal {
+  width: 100%; background: var(--bg-terminal); border: 1px solid var(--border); border-radius: 14px;
+  overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,.6), 0 0 80px rgba(124,58,237,.06);
+}
+.terminal-header {
+  display: flex; align-items: center; gap: 8px; padding: 12px 16px;
+  background: rgba(124,58,237,.06); border-bottom: 1px solid var(--border);
+}
+.terminal-dot { width: 10px; height: 10px; border-radius: 50%; }
+.terminal-dot:nth-child(1) { background: #ef4444; }
+.terminal-dot:nth-child(2) { background: var(--orange); }
+.terminal-dot:nth-child(3) { background: var(--purple-light); }
+.terminal-title { font-size: 12px; color: var(--text-dim); margin-left: 8px; }
+.terminal-body { padding: 20px; font-family: 'SF Mono','Fira Code',monospace; font-size: 13px; line-height: 1.8; }
+.terminal-body .prompt { color: var(--orange); }
+.terminal-body .cmd { color: #e0dce8; }
+.terminal-body .output { color: var(--text-muted); }
+.terminal-body .highlight { color: var(--purple-light); }
+.terminal-body .cursor { display: inline-block; width: 8px; height: 16px; background: var(--orange); animation: blink 1s infinite; margin-left: 2px; vertical-align: text-bottom; }
+@keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+
+.hero-float-badge {
+  position: absolute; bottom: -20px; right: -20px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 16px 20px; display: flex; align-items: center; gap: 12px;
+  box-shadow: 0 10px 40px rgba(0,0,0,.5);
+}
+.hero-float-badge svg { width: 28px; height: 28px; stroke: var(--orange); stroke-width: 1.5; fill: none; }
+.hero-float-badge .text { font-size: 12px; color: var(--text-muted); }
+.hero-float-badge .text strong { color: #f0eef5; font-size: 14px; display: block; }
+
+/* ============ SECTIONS ============ */
+.section {
+  padding: 80px 0; position: relative;
+  background: var(--bg);
+}
+.section::before {
+  content: ''; position: absolute; inset: 0;
+  pointer-events: none; z-index: 0;
+}
+.section-alt {
+  background: var(--bg-alt);
+}
+.section-glow {
+  background: var(--bg);
+}
+.section > .container { position: relative; z-index: 1; }
+.section-header { text-align: center; max-width: 700px; margin: 0 auto 48px; }
+.section-header h2 { font-size: 36px; font-weight: 800; color: #fff; margin-bottom: 12px; }
+.section-header h2 span {
+  color: var(--purple-light);
+}
+.section-header p { font-size: 16px; color: var(--text-muted); line-height: 1.7; }
+.divider { height: 1px; background: var(--border); }
+
+/* ============ PROBLEM ============ */
+.problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+.problem-list { list-style: none; }
+.problem-list li {
+  display: flex; gap: 14px; padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,.03);
+}
+.problem-list li:last-child { border: none; }
+.problem-list svg { width: 22px; height: 22px; flex-shrink: 0; margin-top: 2px; stroke: var(--orange); stroke-width: 1.5; fill: none; }
+.problem-list h4 { font-size: 16px; font-weight: 600; color: #f0eef5; margin-bottom: 4px; }
+.problem-list p { font-size: 14px; color: var(--text-muted); }
+
+.problem-visual {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 32px;
+  position: relative; overflow: hidden;
+}
+.problem-visual::before {
+  content: none;
+}
+.problem-visual h3 { font-size: 20px; font-weight: 700; color: #ef4444; margin-bottom: 6px; }
+.problem-visual p { font-size: 14px; color: var(--text-muted); margin-bottom: 20px; }
+.problem-visual ul { list-style: none; }
+.problem-visual li {
+  padding: 10px 12px; background: rgba(239,68,68,.04); border: 1px solid rgba(239,68,68,.1);
+  border-radius: 8px; margin-bottom: 8px; font-size: 13px; color: #f0eef5;
+  display: flex; align-items: center; gap: 10px;
+}
+.problem-visual li svg { width: 16px; height: 16px; flex-shrink: 0; }
+.problem-visual li .x-stroke { stroke: #ef4444; stroke-width: 2; fill: none; }
+.problem-visual li .check-stroke { stroke: var(--orange); stroke-width: 2.5; fill: none; }
+
+/* ============ SOLUTION ============ */
+.solution-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+.solution-check {
+  display: flex; gap: 14px; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,.03);
+  align-items: flex-start;
+}
+.solution-check:last-child { border: none; }
+.solution-check svg { width: 22px; height: 22px; flex-shrink: 0; margin-top: 1px; stroke: var(--orange); stroke-width: 2.5; fill: none; }
+.solution-check h4 { font-size: 15px; font-weight: 600; color: #f0eef5; margin-bottom: 2px; }
+.solution-check p { font-size: 13px; color: var(--text-muted); }
+
+/* ============ FEATURES ============ */
+.features-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+.feature-card {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px;
+  padding: 28px; transition: all .25s;
+}
+.feature-card:hover { border-color: var(--border-hover); transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,.4); }
+.feature-card svg { width: 32px; height: 32px; stroke: var(--purple-light); stroke-width: 1.5; fill: none; margin-bottom: 14px; }
+.feature-card h3 { font-size: 16px; font-weight: 700; color: #f0eef5; margin-bottom: 8px; }
+.feature-card p { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+
+/* ============ STEPS ============ */
+.steps { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; counter-reset: step; }
+.step-card {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px;
+  padding: 32px; text-align: center; position: relative; counter-increment: step;
+}
+.step-card::before {
+  content: counter(step); position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+  width: 28px; height: 28px; background: var(--purple);
+  color: #fff; font-weight: 800; font-size: 14px;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+}
+.step-card svg { width: 36px; height: 36px; stroke: var(--orange); stroke-width: 1.5; fill: none; margin: 8px 0 16px; }
+.step-card h3 { font-size: 16px; font-weight: 700; color: #f0eef5; margin-bottom: 8px; }
+.step-card p { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+.step-card code { background: rgba(124,58,237,.12); padding: 2px 6px; border-radius: 4px; font-size: 12px; color: var(--purple-light); }
+
+/* ============ USE CASES ============ */
+.usecases-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 16px; }
+.usecase-card {
+  display: flex; gap: 16px; background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 24px; align-items: flex-start;
+}
+.usecase-card svg { width: 24px; height: 24px; stroke: var(--orange); stroke-width: 1.5; fill: none; flex-shrink: 0; }
+.usecase-card h4 { font-size: 15px; font-weight: 600; color: #f0eef5; margin-bottom: 4px; }
+.usecase-card p { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+
+/* ============ INSIDE ============ */
+.inside-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 16px; }
+.inside-item {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px;
+  padding: 20px; display: flex; gap: 14px; align-items: flex-start;
+}
+.inside-item svg { width: 20px; height: 20px; flex-shrink: 0; stroke: var(--purple-light); stroke-width: 1.5; fill: none; margin-top: 2px; }
+.inside-item h4 { font-size: 14px; font-weight: 600; color: #f0eef5; margin-bottom: 2px; }
+.inside-item p { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+
+/* ============ TESTIMONIALS ============ */
+.testimonials-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+.testimonial-card {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 24px;
+}
+.testimonial-card .stars { display: flex; gap: 3px; margin-bottom: 10px; }
+.testimonial-card .stars svg { width: 16px; height: 16px; fill: var(--gold); stroke: var(--gold); stroke-width: 1; }
+.testimonial-card blockquote { font-size: 14px; color: #c0bcd0; line-height: 1.7; margin-bottom: 16px; font-style: italic; }
+.testimonial-card .author { display: flex; align-items: center; gap: 10px; }
+.testimonial-card .avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--purple-dark);
+  display: flex; align-items: center; justify-content: center; font-size: 13px; color: #fff; font-weight: 600;
+}
+.testimonial-card .name { font-size: 13px; font-weight: 600; color: #f0eef5; }
+.testimonial-card .title { font-size: 11px; color: var(--text-dim); }
+
+/* ============ PRICING ============ */
+.pricing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 900px; margin: 0 auto; }
+.pricing-card {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
+  padding: 36px; position: relative; transition: all .25s;
+}
+.pricing-card.featured {
+  border-color: var(--orange); background: var(--bg-card);
+  transform: scale(1.03);
+}
+.pricing-card.featured::before {
+  content: 'BEST VALUE'; position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+  background: var(--orange); color: #09060f;
+  padding: 4px 16px; border-radius: 10px; font-size: 11px; font-weight: 800; letter-spacing: 1px;
+}
+.pricing-card h3 { font-size: 18px; font-weight: 700; color: #f0eef5; margin-bottom: 4px; }
+.pricing-card .sub { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+.pricing-card .price { font-size: 48px; font-weight: 900; color: #fff; margin-bottom: 4px; }
+.pricing-card .price span { font-size: 18px; color: var(--text-muted); font-weight: 400; }
+.pricing-card .savings {
+  display: inline-block; background: rgba(255,107,53,.12); color: var(--orange);
+  padding: 2px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; margin-bottom: 20px;
+}
+.pricing-card ul { list-style: none; margin-bottom: 24px; }
+.pricing-card li {
+  padding: 8px 0; font-size: 14px; color: #c0bcd0; display: flex; align-items: center; gap: 10px;
+  border-bottom: 1px solid rgba(255,255,255,.03);
+}
+.pricing-card li:last-child { border: none; }
+.pricing-card li::before { content: '✓'; color: var(--orange); font-weight: 700; }
+.pricing-card .btn { width: 100%; justify-content: center; }
+
+/* ============ GUARANTEE ============ */
+.guarantee {
+  text-align: center; padding: 60px; max-width: 700px; margin: 0 auto;
+}
+.guarantee svg { width: 56px; height: 56px; stroke: var(--gold); stroke-width: 1.2; fill: none; margin-bottom: 16px; }
+.guarantee h2 { font-size: 28px; font-weight: 800; color: #fff; margin-bottom: 12px; }
+.guarantee p { font-size: 15px; color: var(--text-muted); line-height: 1.7; }
+
+/* ============ FAQ ============ */
+.faq-list { max-width: 700px; margin: 0 auto; }
+.faq-item { border-bottom: 1px solid rgba(255,255,255,.04); padding: 20px 0; }
+.faq-question {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 15px; font-weight: 600; color: #f0eef5; cursor: pointer; user-select: none;
+}
+.faq-question svg { width: 14px; height: 14px; stroke: var(--text-dim); stroke-width: 2; fill: none; transition: transform .3s; }
+.faq-item.open .faq-question svg { transform: rotate(180deg); stroke: var(--orange); }
+.faq-answer { font-size: 14px; color: var(--text-muted); line-height: 1.7; padding-top: 12px; display: none; }
+.faq-item.open .faq-answer { display: block; }
+.faq-answer code { background: rgba(124,58,237,.12); padding: 2px 6px; border-radius: 3px; font-size: 13px; color: var(--purple-light); }
+
+/* ============ CTA ============ */
+.cta-section {
+  padding: 100px 0; text-align: center; position: relative;
+  background: var(--bg-alt);
+}
+.cta-section::before { content: none; }
+.cta-section::after { content: none; }
+.cta-section h2 { font-size: 40px; font-weight: 900; color: #fff; margin-bottom: 12px; }
+.cta-section p { font-size: 18px; color: var(--text-muted); margin-bottom: 32px; max-width: 550px; margin-left: auto; margin-right: auto; }
+.cta-section .trust-bar { display: flex; justify-content: center; gap: 32px; margin-top: 24px; flex-wrap: wrap; }
+.cta-section .trust-bar span { font-size: 13px; color: var(--text-dim); display: flex; align-items: center; gap: 6px; }
+.cta-section .trust-bar svg { width: 14px; height: 14px; stroke: var(--orange); stroke-width: 1.5; fill: none; }
+
+/* ============ VIDEO SECTION ============ */
+.video-wrapper {
+  max-width: 800px; margin: 0 auto;
+}
+.video-frame {
+  position: relative; border-radius: 16px; overflow: hidden;
+  box-shadow:
+    0 0 0 1px rgba(124,58,237,.12),
+    0 20px 60px rgba(0,0,0,.5),
+    0 0 80px rgba(124,58,237,.06);
+  background: #000;
+}
+.video-placeholder {
+  position: relative; width: 100%; aspect-ratio: 16/9;
+  background: var(--bg-terminal);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: transform .3s ease;
+}
+.video-placeholder:hover { transform: scale(1.01); }
+@keyframes videoPulse {
+  0%, 100% { transform: scale(1); opacity: .6; }
+  50% { transform: scale(1.2); opacity: 1; }
+}
+.play-btn {
+  position: relative; z-index: 2;
+  width: 72px; height: 72px; border-radius: 50%;
+  background: rgba(124,58,237,.9);
+  backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
+  transition: all .3s ease;
+  box-shadow: 0 0 0 4px rgba(124,58,237,.2), 0 8px 32px rgba(124,58,237,.3);
+}
+.play-btn:hover {
+  background: var(--purple);
+  transform: scale(1.08);
+  box-shadow: 0 0 0 6px rgba(124,58,237,.25), 0 12px 40px rgba(124,58,237,.4);
+}
+.play-btn svg { width: 28px; height: 28px; margin-left: 3px; }
+.video-label {
+  position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(0,0,0,.7); backdrop-filter: blur(8px);
+  padding: 8px 16px; border-radius: 8px;
+  border: 1px solid rgba(124,58,237,.15);
+  font-size: 13px; color: var(--text-muted); white-space: nowrap;
+}
+.video-label svg { width: 16px; height: 16px; flex-shrink: 0; }
+.video-footnotes {
+  display: flex; justify-content: center; gap: 32px; margin-top: 28px; flex-wrap: wrap;
+}
+.vf-item {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 14px; color: var(--text-muted);
+}
+.vf-item svg { width: 18px; height: 18px; flex-shrink: 0; stroke: var(--purple-light); }
+.vf-item strong { color: var(--text); }
+
+/* ============ FOOTER ============ */
+footer { padding: 40px 0; text-align: center; border-top: 1px solid var(--border); }
+footer p { font-size: 12px; color: var(--text-dim); }
+footer a { color: var(--text-muted); text-decoration: none; }
+footer a:hover { color: var(--purple-light); }
+
+/* ============ RESPONSIVE ============ */
+@media(max-width:900px) {
+  .hero-grid, .problem-grid, .solution-grid { grid-template-columns: 1fr; gap: 40px; }
+  .hero h1 { font-size: 34px; }
+  .features-grid, .steps, .testimonials-grid { grid-template-columns: 1fr 1fr; }
+  .pricing-grid { grid-template-columns: 1fr; }
+  .pricing-card.featured { transform: none; }
+  .usecases-grid, .inside-grid { grid-template-columns: 1fr; }
+}
+@media(max-width:600px) {
+  .hero { padding: 100px 0 50px; }
+  .hero h1 { font-size: 28px; }
+  .features-grid, .steps, .testimonials-grid { grid-template-columns: 1fr; }
+  .hero .cta-group { flex-direction: column; }
+  .btn-primary-lg { width: 100%; text-align: center; }
+}
+.section-dots > .container { position: relative; z-index: 1; }
+
+.fade-in { opacity: 0; transform: translateY(20px); transition: all .6s ease; }
+.fade-in.visible { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <div class="logo">
+      <svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="6" cy="18" r="3" stroke="currentColor" stroke-width="1.5" fill="none"/><circle cx="18" cy="16" r="3" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+      <span>Suno</span> API Pro
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <a href="#features" style="color:var(--text-muted);text-decoration:none;font-size:13px;padding:6px 12px">Features</a>
+      <a href="#pricing" style="color:var(--text-muted);text-decoration:none;font-size:13px;padding:6px 12px">Pricing</a>
+      <a href="#faq" style="color:var(--text-muted);text-decoration:none;font-size:13px;padding:6px 12px">FAQ</a>
+      <a href="#buy" class="btn btn-primary" style="font-size:13px;padding:8px 20px">Get Instant Access</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div>
+        <div class="badge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          Self-Hosted · No Monthly Fees · Lifetime Updates
+        </div>
+        <h1>Turn Your Suno AI Account Into a <span>Private REST API</span> in 60 Seconds</h1>
+        <p>No official API? Self-host this gateway on your own server, connect your Suno account, and get instant programmatic access. Runs as a native app on Windows, macOS, and Linux — no Docker, no cloud dependencies.</p>
+        <div class="cta-group">
+          <a href="#buy" class="btn btn-glow btn-primary-lg">Get Instant Access — $21</a>
+          <a href="#features" class="btn btn-outline" style="font-size:15px;padding:14px 28px">See All Features</a>
+        </div>
+        <div class="trust">
+          <span><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> No monthly fees</span>
+          <span><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> 30-day guarantee</span>
+          <span><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Windows · macOS · Linux</span>
+          <span><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Lifetime updates</span>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="hero-terminal">
+          <div class="terminal-header">
+            <div class="terminal-dot"></div>
+            <div class="terminal-dot"></div>
+            <div class="terminal-dot"></div>
+            <div class="terminal-title">Suno API Pro — Terminal</div>
+          </div>
+          <div class="terminal-body">
+            <span class="prompt">$ </span><span class="cmd">curl -X POST https://api.myserver.com/v1/generate \<br>
+            &nbsp;&nbsp;-H "x-api-key: <span class="highlight">suno_a1b2c3d4...</span>" \<br>
+            &nbsp;&nbsp;-d '{"prompt":"A chill lo-fi beat"}'</span><br>
+            <span class="output">{<br>
+            &nbsp;&nbsp;"success": true,<br>
+            &nbsp;&nbsp;"data": {<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;"id": "clip_xxxxxxxx",<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;"title": "Afternoon Study",<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;"audio_url": "https://...",<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;"duration": 180<br>
+            &nbsp;&nbsp;}<br>
+            }<span class="cursor"></span></span>
+          </div>
+        </div>
+        <div class="hero-float-badge">
+          <svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          <div class="text">
+            <strong>Instant API Response</strong>
+            Connect once, generate forever
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============ PROBLEM ============ -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="problem-grid">
+      <div>
+        <div class="section-header" style="text-align:left;margin:0 0 24px">
+          <h2>The Problem: <span>No Official Suno API</span></h2>
+          <p style="margin:0">Suno AI is exploding — but there's still no public API.</p>
+        </div>
+        <ul class="problem-list">
+          <li>
+            <svg viewBox="0 0 24 24"><path d="M4 4l16 16M20 4l-16 16" stroke="currentColor" stroke-width="1.5"/></svg>
+            <div><h4>Copy-Paste Hell</h4><p>Manually logging in and clicking buttons kills your productivity. You can't scale a business on manual work.</p></div>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24"><path d="M4 4l16 16M20 4l-16 16" stroke="currentColor" stroke-width="1.5"/></svg>
+            <div><h4>No Official API</h4><p>No SDK, no webhooks, no endpoints. Every automation idea dies because there's no way to connect programmatically.</p></div>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24"><path d="M4 4l16 16M20 4l-16 16" stroke="currentColor" stroke-width="1.5"/></svg>
+            <div><h4>Shady Third-Party Proxies</h4><p>They charge $49–$99/month, steal your credentials, and shut down overnight. Zero control, zero privacy.</p></div>
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24"><path d="M4 4l16 16M20 4l-16 16" stroke="currentColor" stroke-width="1.5"/></svg>
+            <div><h4>Session Expiry Nightmare</h4><p>Even hacked-together solutions break when Suno sessions expire. Back to square one, broken automations, lost time.</p></div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="problem-visual">
+        <h3>Without Suno API Pro</h3>
+        <p>The current reality for developers and creators using Suno programmatically.</p>
+        <ul>
+          <li><svg class="x-stroke" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6l-12 12"/></svg> Spend 10+ minutes extracting cookies manually</li>
+          <li><svg class="x-stroke" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6l-12 12"/></svg> Pay $49/month for unreliable proxies</li>
+          <li><svg class="x-stroke" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6l-12 12"/></svg> Sessions break every few hours</li>
+          <li><svg class="x-stroke" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6l-12 12"/></svg> No API key system — share your password</li>
+          <li><svg class="x-stroke" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6l-12 12"/></svg> Zero documentation, zero support</li>
+          <li style="border-color:rgba(255,107,53,.2);background:rgba(255,107,53,.05);margin-top:16px"><svg class="check-stroke" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> <strong style="color:var(--orange)">With Suno API Pro — all problems disappear.</strong></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============ SOLUTION ============ -->
+<section class="section section-glow section-dots" id="features">
+  <div class="container">
+    <div class="solution-grid">
+      <div style="order:2">
+        <div class="section-header" style="text-align:left;margin:0 0 24px">
+          <h2>Introducing <span>Suno API Pro</span></h2>
+          <p style="margin:0">The missing API layer for Suno AI. Self-hosted, private, and built to last.</p>
+        </div>
+        <div class="solution-check">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          <div><h4>One-Click Cookie Extraction</h4><p>Chrome extension reads your Suno session with one click. No terminal, no DevTools spelunking.</p></div>
+        </div>
+        <div class="solution-check">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          <div><h4>Multi-Account Round-Robin</h4><p>Add 1, 3, or 10 Suno accounts. API calls distribute intelligently — max throughput, zero downtime.</p></div>
+        </div>
+        <div class="solution-check">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          <div><h4>Full API Key Management</h4><p>Create unlimited named API keys. Assign per-account or round-robin. Rotate and revoke instantly.</p></div>
+        </div>
+        <div class="solution-check">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          <div><h4>24/7 Production-Ready</h4><p>Built-in PM2 + systemd support. Deploy to any VPS in one command. Stays up forever.</p></div>
+        </div>
+        <div class="solution-check">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          <div><h4>Keep-Alive Engine</h4><p>Automatic session pings every 5 minutes. Your Suno accounts never expire while the server runs.</p></div>
+        </div>
+        <div class="solution-check">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          <div><h4>Lifetime Updates</h4><p>Built-in auto-update checker. When Suno's API changes, you get the fix instantly — forever, no renewal needed.</p></div>
+        </div>
+      </div>
+
+      <div class="problem-visual" style="order:1;border-color:rgba(255,107,53,.2)">
+        <h3 style="color:var(--orange)">With Suno API Pro</h3>
+        <p style="color:var(--text-muted)">The same developer. The same Suno account. Now with superpowers.</p>
+        <ul>
+          <li style="border-color:rgba(255,107,53,.12);background:rgba(255,107,53,.04)"><svg class="check-stroke" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> One-click cookie extraction</li>
+          <li style="border-color:rgba(255,107,53,.12);background:rgba(255,107,53,.04)"><svg class="check-stroke" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Self-hosted — your data, your server</li>
+          <li style="border-color:rgba(255,107,53,.12);background:rgba(255,107,53,.04)"><svg class="check-stroke" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Keep-alive: sessions stay fresh</li>
+          <li style="border-color:rgba(255,107,53,.12);background:rgba(255,107,53,.04)"><svg class="check-stroke" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Unlimited API keys with routing</li>
+          <li style="border-color:rgba(255,107,53,.12);background:rgba(255,107,53,.04)"><svg class="check-stroke" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Full REST API: generate, feed, clip, search, credits</li>
+          <li style="border-color:rgba(255,107,53,.12);background:rgba(255,107,53,.04)"><svg class="check-stroke" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Auto-update checker — lifetime compatibility</li>
+          <li style="border-color:rgba(255,107,53,.12);background:rgba(255,107,53,.04);margin-top:16px"><svg class="check-stroke" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> <strong style="color:var(--orange)">$21 one-time — no recurring fees</strong></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============ HOW IT WORKS ============ -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-header">
+      <h2>How It Works: <span>3 Simple Steps</span></h2>
+      <p>From zero to generating music via API in under 5 minutes.</p>
+    </div>
+    <div class="steps">
+      <div class="step-card fade-in">
+        <svg viewBox="0 0 24 24"><path d="M4 17l4 4L20 6" stroke="currentColor" stroke-width="1.5"/><path d="M9 12h6M12 9v6" stroke="currentColor" stroke-width="1.5" opacity=".5"/></svg>
+        <h3>Install &amp; Start</h3>
+        <p>Run the standalone Windows <strong>EXE</strong>, the macOS <strong>.app bundle</strong>, or use <code>npm install</code> on any OS. Deploy to a VPS in one command. Done.</p>
+      </div>
+      <div class="step-card fade-in">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.5"/><path d="M20 21a8 8 0 1 0-16 0" stroke="currentColor" stroke-width="1.5"/></svg>
+        <h3>Add Your Suno Account</h3>
+        <p>Open the dashboard, click "Extract from Browser" — the Chrome extension fills in your credentials instantly.</p>
+      </div>
+      <div class="step-card fade-in">
+        <svg viewBox="0 0 24 24"><path d="M9 18l9-8-9-8v16z" stroke="currentColor" stroke-width="1.5"/><path d="M5 3v18" stroke="currentColor" stroke-width="1.5" opacity=".5"/></svg>
+        <h3>Create Key &amp; Generate</h3>
+        <p>Name your key and start calling <code>POST /v1/generate</code> from any app. That's it.</p>
+      </div>
+      <div class="step-card fade-in">
+        <svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2" stroke="currentColor"/><path d="M9 22v-4h6v4" stroke="currentColor"/><path d="M8 6h8M8 10h6" stroke="currentColor" opacity=".5"/></svg>
+        <h3>Cross-Platform Native</h3>
+        <p>Build a portable <strong>Windows .exe</strong> or a <strong>macOS .app</strong> with included build scripts. No runtime installations needed on target machines.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============ VIDEO DEMO ============ -->
+<section class="section section-alt section-dots">
+  <div class="container">
+    <div class="section-header">
+      <span class="badge">📺 Watch It In Action</span>
+      <h2 style="margin-top:12px">See <span>Suno API Pro</span> In <span>60 Seconds</span></h2>
+      <p style="color:var(--text-muted)">Watch how to connect your Suno account, generate music, and use your private API — all in under a minute.</p>
+    </div>
+    <div class="video-wrapper">
+      <div class="video-frame">
+        <div class="video-placeholder">
+          <div class="video-glow"></div>
+          <div class="play-btn">
+            <svg viewBox="0 0 24 24" fill="none"><polygon points="7,5 19,12 7,19" fill="white"/></svg>
+          </div>
+          <div class="video-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+            <span>Product Demo (1:42)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="video-footnotes">
+      <div class="vf-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span><strong>Quick setup</strong> — Install & connect in under 2 minutes</span>
+      </div>
+      <div class="vf-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <span><strong>Real generation</strong> — Watch actual Suno API calls happen live</span>
+      </div>
+      <div class="vf-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <span><strong>Dashboard walkthrough</strong> — Accounts, keys, settings & more</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============ FEATURES ============ -->
+<section class="section section-glow section-dots">
+  <div class="container">
+    <div class="section-header">
+      <h2>Everything <span>You Get</span></h2>
+      <p>This isn't a wrapper script. It's a complete, production-ready API gateway.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card fade-in">
+        <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" stroke="currentColor"/><path d="M8 21h8M12 17v4" stroke="currentColor"/></svg>
+        <h3>Beautiful Dashboard</h3>
+        <p>Browser-based management UI. Monitor accounts, manage API keys, and check server status in real time.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <svg viewBox="0 0 24 24"><path d="M21 2l-2 2m-7.5 7.5L21 2" stroke="currentColor"/><circle cx="5" cy="19" r="3" stroke="currentColor"/><path d="M9 15l-1.5 1.5" stroke="currentColor"/><path d="M2 2l20 20" stroke="currentColor" opacity=".3"/></svg>
+        <h3>API Key System</h3>
+        <p>Create unlimited named keys. Assign per-account or round-robin. Rotate or revoke any key independently.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" stroke="currentColor"/><path d="M12 1v4M12 19v4M1 12h4M19 12h4" stroke="currentColor"/><circle cx="12" cy="12" r="9" stroke="currentColor" opacity=".3"/></svg>
+        <h3>Multi-Account Support</h3>
+        <p>Add 2, 5, or 10 Suno accounts. API calls distribute round-robin. If one fails, the next picks up.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8" stroke="currentColor"/></svg>
+        <h3>Keep-Alive Engine</h3>
+        <p>Automatic session pings every 5 minutes keep your Suno accounts alive. No "session expired" errors.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <svg viewBox="0 0 24 24"><path d="M5 3l14 9-14 9V3z" stroke="currentColor"/></svg>
+        <h3>Full REST API</h3>
+        <p>Generate, feed, clip, search, credits — every Suno endpoint exposed as a clean REST API via POST, GET, etc.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="currentColor"/><path d="M8 9h8M8 13h6" stroke="currentColor" opacity=".6"/></svg>
+        <h3>Chrome Extension</h3>
+        <p>One-click cookie extraction from your browser. Click "Extract" and the fields auto-fill. No DevTools needed.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2" stroke="currentColor"/><path d="M9 22v-4h6v4" stroke="currentColor"/><path d="M8 6h8M8 10h6" stroke="currentColor" opacity=".5"/></svg>
+        <h3>Cross-Platform Native Apps</h3>
+        <p>Run as a standalone Windows EXE, macOS .app, or from any Linux terminal. Build portable installers with included scripts — no Node.js needed on target machines.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor"/><path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="currentColor"/></svg>
+        <h3>Try Before You Buy</h3>
+        <p>Full 48-hour / 25-call trial mode built in. Test every feature before activating your license — no risk, no commitment.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor"/></svg>
+        <h3>24/7 Production Mode</h3>
+        <p>Pure Node.js — no Docker needed. PM2 config + systemd service included. Deploy to a $6/month VPS and forget it. Auto-restarts on crash.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============ USE CASES ============ -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-header">
+      <h2>Who Needs <span>This?</span></h2>
+    </div>
+    <div class="usecases-grid">
+      <div class="usecase-card fade-in">
+        <svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13" stroke="currentColor"/><circle cx="6" cy="18" r="3" stroke="currentColor"/><circle cx="18" cy="16" r="3" stroke="currentColor"/></svg>
+        <div><h4>Music SaaS Founders</h4><p>Build a music generation app on top of Suno. Your users get custom tracks; you get a working product with zero API fees.</p></div>
+      </div>
+      <div class="usecase-card fade-in">
+        <svg viewBox="0 0 24 24"><path d="M12 2a8 8 0 0 0-8 8c0 5.4 8 12 8 12s8-6.6 8-12a8 8 0 0 0-8-8z" stroke="currentColor"/><circle cx="12" cy="10" r="2" stroke="currentColor"/></svg>
+        <div><h4>Bot Developers</h4><p>Let users generate music inside your Discord or Telegram bot. POST to the API from Python, Node.js, Go, or PHP.</p></div>
+      </div>
+      <div class="usecase-card fade-in">
+        <svg viewBox="0 0 24 24"><path d="M4 4l16 16M4 20L20 4" stroke="currentColor" opacity=".3"/><rect x="2" y="3" width="20" height="14" rx="2" stroke="currentColor"/><path d="M8 21h8M12 17v4" stroke="currentColor"/></svg>
+        <div><h4>App Developers</h4><p>Integrate Suno music generation into your mobile or web app. Your backend calls the API, users get custom songs.</p></div>
+      </div>
+      <div class="usecase-card fade-in">
+        <svg viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7" stroke="currentColor"/><rect x="1" y="5" width="15" height="14" rx="2" stroke="currentColor"/></svg>
+        <div><h4>Content Creators</h4><p>Automate background music for YouTube, podcasts, or social media. Queue 20 tracks with a single script.</p></div>
+      </div>
+      <div class="usecase-card fade-in">
+        <svg viewBox="0 0 24 24"><path d="M12 2a4 4 0 0 0-4 4v1a4 4 0 0 0 8 0V6a4 4 0 0 0-4-4z" stroke="currentColor"/><path d="M4 22v-1a6 6 0 0 1 12 0v1" stroke="currentColor"/><path d="M18 10l3 3-3 3M21 13h-6" stroke="currentColor" opacity=".6"/></svg>
+        <div><h4>AI Researchers</h4><p>Experiment with prompt engineering at scale. Generate hundreds of variations and analyze outputs programmatically.</p></div>
+      </div>
+      <div class="usecase-card fade-in">
+        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor"/><circle cx="9" cy="7" r="4" stroke="currentColor"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor"/></svg>
+        <div><h4>Agencies &amp; Resellers</h4><p>White-label the API for clients. Manage multiple Suno accounts under one dashboard. Each client gets their own key.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============ WHAT'S INSIDE ============ -->
+<section class="section section-glow">
+  <div class="container">
+    <div class="section-header">
+      <h2>What's <span>Inside the Box</span></h2>
+      <p>Everything you need to turn Suno into a REST API. Your license key is delivered separately via email.</p>
+    </div>
+    <div class="inside-grid">
+      <div class="inside-item fade-in">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor"/><polyline points="14 2 14 8 20 8" stroke="currentColor"/><path d="M9 13l2 2 4-4" stroke="currentColor"/></svg>
+        <div><h4>server.js</h4><p>All-in-one Express server with 12 REST endpoints, API key auth, license validation, and dashboard serving.</p></div>
+      </div>
+      <div class="inside-item fade-in">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor"/><polyline points="14 2 14 8 20 8" stroke="currentColor"/></svg>
+        <div><h4>client/suno-client.js</h4><p>Pure Node.js Suno API wrapper. Handles sessions, keep-alive, and all internal Suno endpoints.</p></div>
+      </div>
+      <div class="inside-item fade-in">
+        <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" stroke="currentColor"/><path d="M8 21h8M12 17v4" stroke="currentColor"/></svg>
+        <div><h4>dashboard/public/</h4><p>Complete web UI: responsive dark-mode dashboard, account management, API key CRUD, and help guide.</p></div>
+      </div>
+      <div class="inside-item fade-in">
+        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="currentColor"/></svg>
+        <div><h4>extension/</h4><p>Chrome extension with content script + service worker. One-click extraction + auto-refresh every 25 min.</p></div>
+      </div>
+      <div class="inside-item fade-in">
+        <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor"/></svg>
+        <div><h4>deploy.sh + PM2 + systemd</h4><p>Production deployment scripts. One-command VPS setup, process manager, and background service config.</p></div>
+      </div>
+      <div class="inside-item fade-in">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor"/><path d="M12 16v-4M12 8h.01" stroke="currentColor"/></svg>
+        <div><h4>help.html</h4><p>30 KB comprehensive guide with 12 sections covering installation, usage, API reference, and troubleshooting.</p></div>
+      </div>
+      <div class="inside-item fade-in">
+        <svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2" stroke="currentColor"/><path d="M9 22v-4h6v4" stroke="currentColor"/><path d="M8 6h8M8 10h6" stroke="currentColor" opacity=".5"/></svg>
+        <div><h4>Cross-Platform Installers</h4><p>Windows standalone EXE builder + macOS .app bundle + DMG builder + universal install scripts for all OS.</p></div>
+      </div>
+      <div class="inside-item fade-in">
+        <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        <div><h4>Auto-Update System</h4><p>Background update checker pings every 24h. Dashboard notification when a new version is available. One-click download.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============ TESTIMONIALS ============ -->
+<section class="section section-alt section-dots">
+  <div class="container">
+    <div class="section-header">
+      <h2>Trusted by <span>Developers &amp; Creators</span></h2>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card fade-in">
+        <div class="stars">
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 16 14 18 22 12 17 6 22 8 14 2 9 9 9"/></svg>
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 16 14 18 22 12 17 6 22 8 14 2 9 9 9"/></svg>
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 16 14 18 22 12 17 6 22 8 14 2 9 9 9"/></svg>
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 16 14 18 22 12 17 6 22 8 14 2 9 9 9"/></svg>
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 16 14 18 22 12 17 6 22 8 14 2 9 9 9"/></svg>
+        </div>
+        <blockquote>"I was paying $79/month for a Suno proxy that went down every week. This replaced it entirely. Running on a $6 VPS, zero issues in 3 weeks."</blockquote>
+        <div class="author">
+          <div class="avatar">MK</div>
+          <div><div class="name">Marcus K.</div><div class="title">SaaS Developer</div></div>
+        </div>
+      </div>
+      <div class="testimonial-card fade-in">
+        <div class="stars">
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 16 14 18 22 12 17 6 22 8 14 2 9 9 9"/></svg>
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 16 14 18 22 12 17 6 22 8 14 2 9 9 9"/></svg>
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 16 14 18 22 12 17 6 22 8 14 2 9 9 9"/></svg>
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 16 14 18 22 12 17 6 22 8 14 2 9 9 9"/></svg>
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 16 14 18 22 12 17 6 22 8 14 2 9 9 9"/></svg>
+        </div>
+        <blockquote>"The multi-account feature is insane. I added 4 accounts and my throughput quadrupled. The dashboard is gorgeous and the API just works."</blockquote>
+        <div class="author">
+          <div class="avatar">SL</div>
+          <div><div class="name">Sarah L.</div><div class="title">Bot Developer</div></div>
+        </div>
+      </div>
+      <div class="testimonial-card fade-in">
+        <div class="stars">
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 16 14 18 22 12 17 6 22 8 14 2 9 9 9"/></svg>
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 16 14 18 22 12 17 6 22 8 14 2 9 9 9"/></svg>
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 16 14 18 22 12 17 6 22 8 14 2 9 9 9"/></svg>
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 16 14 18 22 12 17 6 22 8 14 2 9 9 9"/></svg>
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15 9 22 9 16 14 18 22 12 17 6 22 8 14 2 9 9 9"/></svg>
+        </div>
+        <blockquote>"Built the Windows EXE in 2 minutes with the included script. Deployed it for a client who just double-clicks and goes. No Node.js install needed on their end."</blockquote>
+        <div class="author">
+          <div class="avatar">AT</div>
+          <div><div class="name">Alex T.</div><div class="title">Agency Owner</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============ PRICING ============ -->
+<section class="section section-glow section-dots" id="pricing">
+  <div class="container">
+    <div class="section-header">
+      <h2>Simple <span>One-Time Pricing</span></h2>
+      <p>No subscriptions. No hidden fees. Pay once, own it forever.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="pricing-card fade-in">
+        <h3>Starter</h3>
+        <div class="sub">Single account — perfect for individuals</div>
+        <div class="price">$21 <span>one-time</span></div>
+        <div style="font-size:13px;color:var(--text-muted);margin-bottom:20px">Full REST API at a fraction of the cost</div>
+        <ul>
+          <li>Full REST API (generate, feed, clip, search, credits)</li>
+          <li>Beautiful management dashboard</li>
+          <li>Chrome extension for one-click extraction</li>
+          <li>Up to 10 API keys</li>
+          <li>1 Suno account</li>
+          <li>25 API calls per minute</li>
+          <li>Keep-alive engine</li>
+          <li>PM2 + systemd deployment</li>
+          <li>30-day money-back guarantee</li>
+          <li>Lifetime updates</li>
+        </ul>
+        <a href="#buy" class="btn btn-primary">Get Instant Access — $21</a>
+      </div>
+
+      <div class="pricing-card featured fade-in">
+        <h3>Pro</h3>
+        <div class="sub">Multi-account + round-robin routing</div>
+        <div class="price">$37 <span>one-time</span></div>
+        <div class="savings">Best value — unlimited everything</div>
+        <ul>
+          <li>Everything in Starter, plus:</li>
+          <li>Unlimited Suno accounts</li>
+          <li>Unlimited API keys</li>
+          <li>100 API calls per minute</li>
+          <li>Round-robin account routing</li>
+          <li>Per-account API key assignment</li>
+          <li>Priority email support</li>
+          <li>Windows standalone EXE build</li>
+          <li>macOS .app bundle build</li>
+          <li>White-label ready</li>
+          <li>Lifetime updates</li>
+        </ul>
+        <a href="#buy" class="btn btn-gold" style="width:100%;justify-content:center">Get Instant Access — $37</a>
+      </div>
+    </div>
+    <p style="text-align:center;font-size:13px;color:var(--text-dim);margin-top:24px">All prices are one-time. No subscriptions. No recurring fees. Ever.</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============ GUARANTEE ============ -->
+<section style="padding:40px 0;background:var(--bg-alt)">
+  <div class="container">
+    <div class="guarantee">
+      <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2"/></svg>
+      <h2>100% Risk-Free — 30-Day Guarantee</h2>
+      <p>If Suno API Pro doesn't meet your expectations for any reason, email us within 30 days and we'll refund every penny. No questions asked. You keep the software and all future updates.</p>
+      <p style="margin-top:12px;color:var(--text-dim);font-size:13px">I'm confident this will save you hundreds of dollars and dozens of hours. But if I'm wrong, you're covered.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============ FAQ ============ -->
+<section class="section section-alt" id="faq">
+  <div class="container">
+    <div class="section-header">
+      <h2>Frequently <span>Asked Questions</span></h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item open">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span>Do I need a Suno subscription?</span>
+          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="faq-answer">Yes. You need a Suno AI account (free or paid). Suno API Pro connects to your existing Suno account — it doesn't replace it. You keep all your credits, generations, and settings.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span>Is this an official Suno product?</span>
+          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="faq-answer">No. This is an independent third-party tool that interfaces with Suno's web backend. It's not affiliated with or endorsed by Suno AI. Think of it as a custom API wrapper for your own account.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span>Do I need coding experience?</span>
+          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="faq-answer">On <strong>Windows and macOS</strong>, double-click and go — no terminal needed. On Linux, it's one <code>npm install &amp;&amp; node server.js</code>. The dashboard handles everything visually. To use the API, any language that speaks HTTP works: Python, Node.js, Go, PHP, or even <code>curl</code> in your terminal.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span>Can I host on a VPS?</span>
+          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="faq-answer">Absolutely. Run the deploy script on any Ubuntu VPS (DigitalOcean, Linode, Vultr) and it auto-installs Node.js, PM2, and configures the server as a background service. One command, done.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span>What if my Suno cookie expires?</span>
+          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="faq-answer">The keep-alive engine pings Suno every 5 minutes to keep your session fresh. If it somehow expires, the dashboard shows an error, you re-extract with the Chrome extension (one click), and you're back online in seconds.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span>What happens when Suno updates their API?</span>
+          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="faq-answer">You're covered. Suno API Pro includes a built-in <strong>auto-update checker</strong> that pings our update server every 24 hours. When Suno's endpoints change, we push a compatibility fix — you see a notification in the dashboard and download the update with one click. <strong>Lifetime updates included</strong> in both tiers, no additional fee, no renewal, ever.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span>Can I add multiple accounts?</span>
+          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="faq-answer">Yes. The Pro tier unlocks unlimited accounts. Each account maintains its own session independently. API calls round-robin or pin to a specific account via API key assignment.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span>Is my password stored on the server?</span>
+          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="faq-answer">No passwords are used. Suno API Pro uses session cookies (the same tokens your browser uses), stored in a local JSON file on your own server. Your credentials never leave your machine.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span>Does it work on Windows, Mac, and Linux?</span>
+          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="faq-answer">Yes — all three. Run it as a <strong>standalone Windows .exe</strong> (build included), a <strong>macOS .app bundle</strong> (LaunchAgent auto-start included), or via Node.js on any platform. The Pro tier includes the build scripts so you can create portable installers for distribution.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span>What's the refund policy?</span>
+          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="faq-answer">30-day money-back guarantee. If it doesn't work for you for any reason, email us and we'll refund the full amount. No questions, no hassle.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ============ CTA ============ -->
+<section class="cta-section" id="buy">
+  <div class="container">
+    <h2>Ready to <span style="color:var(--purple-light)">Unlock Suno's API?</span></h2>
+    <p>Join hundreds of developers and creators who stopped waiting for an official API and built their own.</p>
+    <a href="#" class="btn btn-glow btn-primary-lg">Get Instant Access — $21</a>
+    <div class="trust-bar">
+      <span><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Secure checkout via Warrior Plus</span>
+      <span><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Instant digital delivery</span>
+      <span><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Lifetime updates included</span>
+      <span><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> 30-day money-back guarantee</span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>© 2026 Suno API Pro. All rights reserved. Not affiliated with Suno AI.</p>
+    <p style="margin-top:4px">
+      <a href="#">Privacy Policy</a> &middot;
+      <a href="#">Terms of Service</a> &middot;
+      <a href="#">Support</a>
+    </p>
+  </div>
+</footer>
+
+<script>
+function toggleFaq(el) {
+  el.parentElement.classList.toggle('open');
+}
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) entry.target.classList.add('visible');
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function(e) {
+    e.preventDefault();
+    const t = document.querySelector(this.getAttribute('href'));
+    if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+</script>
+</body>
+</html>
