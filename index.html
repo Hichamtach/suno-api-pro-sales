@@ -57,23 +57,37 @@ nav .btn { font-size: 13px; padding: 8px 20px; }
   display: inline-flex; align-items: center; gap: 8px;
   padding: 14px 32px; border-radius: 10px; font-weight: 600;
   font-size: 15px; cursor: pointer; border: none;
-  transition: all .25s; text-decoration: none; font-family: inherit;
+  transition: all .3s cubic-bezier(0.25, 0.8, 0.25, 1); text-decoration: none; font-family: inherit;
+}
+.btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.15);
 }
 .btn-primary {
-  background: var(--purple);
+  background: linear-gradient(135deg, var(--purple) 0%, var(--purple-dark) 100%);
   color: #fff; cursor: pointer;
+  box-shadow: 0 4px 15px var(--glow-purple);
 }
-.btn-glow { position: relative; }
+.btn-primary:hover {
+  box-shadow: 0 8px 25px rgba(124,58,237,.4);
+}
 .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
-.btn-gold { background: var(--gold); color: #09060f; }
+.btn-outline:hover { background: rgba(255,255,255,0.03); border-color: var(--border-hover); }
+.btn-gold { background: var(--gold); color: #09060f; box-shadow: 0 4px 15px var(--glow-gold); }
+.btn-gold:hover { box-shadow: 0 8px 25px rgba(245,158,11,.4); }
 .btn-primary-lg {
-  padding: 14px 32px; font-size: 15px;
-  background: var(--purple);
+  padding: 16px 36px; font-size: 16px;
+  background: linear-gradient(135deg, var(--purple) 0%, var(--orange) 100%);
   color: #fff; animation: pulse-glow 2.5s infinite;
 }
+.btn-primary-lg:hover {
+  animation-play-state: paused;
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 12px 35px rgba(124,58,237,.45), 0 0 20px rgba(255,107,53,.35);
+}
 @keyframes pulse-glow {
-  0%,100% { box-shadow: 0 0 40px var(--glow-purple), 0 4px 20px var(--glow-purple); }
-  50% { box-shadow: 0 0 60px rgba(124,58,237,.35), 0 6px 30px rgba(124,58,237,.45); }
+  0%,100% { box-shadow: 0 0 40px var(--glow-purple), 0 4px 20px rgba(255,107,53,.15); }
+  50% { box-shadow: 0 0 60px rgba(124,58,237,.35), 0 6px 30px rgba(255,107,53,.35); }
 }
 
 /* ============ HERO ============ */
@@ -136,18 +150,27 @@ nav .btn { font-size: 13px; padding: 8px 20px; }
 
 /* ============ SECTIONS ============ */
 .section {
-  padding: 80px 0; position: relative;
+  padding: 90px 0; position: relative; overflow: hidden;
   background: var(--bg);
+  transition: background 0.5s ease;
 }
 .section::before {
   content: ''; position: absolute; inset: 0;
+  background: radial-gradient(circle at 10% 20%, rgba(255, 107, 53, 0.02) 0%, transparent 40%),
+              radial-gradient(circle at 90% 80%, rgba(124, 58, 237, 0.02) 0%, transparent 40%);
   pointer-events: none; z-index: 0;
 }
 .section-alt {
-  background: var(--bg-alt);
+  background: linear-gradient(135deg, var(--bg) 0%, #110928 100%);
+  position: relative;
+}
+.section-alt::after {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(circle at 70% 30%, rgba(124, 58, 237, 0.02) 0%, transparent 50%);
+  pointer-events: none; z-index: 0;
 }
 .section-glow {
-  background: var(--bg);
+  background: radial-gradient(circle at 50% 50%, rgba(124, 58, 237, 0.08) 0%, var(--bg) 80%);
 }
 .section > .container { position: relative; z-index: 1; }
 .section-header { text-align: center; max-width: 700px; margin: 0 auto 48px; }
@@ -203,9 +226,13 @@ nav .btn { font-size: 13px; padding: 8px 20px; }
 .features-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
 .feature-card {
   background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px;
-  padding: 28px; transition: all .25s;
+  padding: 28px; transition: all .3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
-.feature-card:hover { border-color: var(--border-hover); transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,.4); }
+.feature-card:hover { 
+  border-color: var(--purple-light); 
+  transform: translateY(-6px); 
+  box-shadow: 0 15px 35px rgba(124,58,237,.15), 0 0 20px rgba(124,58,237,.05);
+}
 .feature-card svg { width: 32px; height: 32px; stroke: var(--purple-light); stroke-width: 1.5; fill: none; margin-bottom: 14px; }
 .feature-card h3 { font-size: 16px; font-weight: 700; color: #f0eef5; margin-bottom: 8px; }
 .feature-card p { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
@@ -215,6 +242,12 @@ nav .btn { font-size: 13px; padding: 8px 20px; }
 .step-card {
   background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px;
   padding: 32px; text-align: center; position: relative; counter-increment: step;
+  transition: all .3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+.step-card:hover {
+  border-color: var(--orange-light);
+  transform: translateY(-6px);
+  box-shadow: 0 15px 35px rgba(255, 107, 53, 0.1), 0 0 20px rgba(255, 107, 53, 0.03);
 }
 .step-card::before {
   content: counter(step); position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
@@ -232,6 +265,12 @@ nav .btn { font-size: 13px; padding: 8px 20px; }
 .usecase-card {
   display: flex; gap: 16px; background: var(--bg-card); border: 1px solid var(--border);
   border-radius: 12px; padding: 24px; align-items: flex-start;
+  transition: all .3s ease;
+}
+.usecase-card:hover {
+  border-color: var(--purple-light);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(124,58,237,.08);
 }
 .usecase-card svg { width: 24px; height: 24px; stroke: var(--orange); stroke-width: 1.5; fill: none; flex-shrink: 0; }
 .usecase-card h4 { font-size: 15px; font-weight: 600; color: #f0eef5; margin-bottom: 4px; }
@@ -268,11 +307,22 @@ nav .btn { font-size: 13px; padding: 8px 20px; }
 .pricing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 900px; margin: 0 auto; }
 .pricing-card {
   background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
-  padding: 36px; position: relative; transition: all .25s;
+  padding: 36px; position: relative; transition: all .3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+.pricing-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--purple-light);
+  box-shadow: 0 20px 40px rgba(124,58,237,.15), 0 0 25px rgba(124,58,237,.05);
 }
 .pricing-card.featured {
   border-color: var(--orange); background: var(--bg-card);
   transform: scale(1.03);
+  transition: all .3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+.pricing-card.featured:hover {
+  transform: scale(1.03) translateY(-6px);
+  border-color: var(--orange-light);
+  box-shadow: 0 20px 40px rgba(255,107,53,.2), 0 0 25px rgba(255,107,53,.08);
 }
 .pricing-card.featured::before {
   content: 'BEST VALUE'; position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
@@ -657,6 +707,39 @@ nav { top: 40px !important; }
   </div>
 </section>
 
+<!-- ============ DASHBOARD VISUAL SECTION ============ -->
+<section class="section section-alt">
+  <div class="container">
+    <div style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 40px; align-items: center;">
+      <div>
+        <span class="badge">🖥️ MANAGEMENT DASHBOARD</span>
+        <h2 style="margin-top:12px; font-size: 28px; line-height: 1.3;">A Beautiful UI to <span>Manage Everything</span></h2>
+        <p style="color:var(--text-muted); margin: 16px 0 24px; line-height: 1.7;">Suno API Pro includes a responsive web-based control panel. Monitor connected accounts, create, rotate or delete developer API keys, configure live SMTP email delivery, and view sales details — all from a clean interface designed for developers and admins alike.</p>
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <svg style="width:20px; height:20px; stroke:var(--purple-light); fill:none; stroke-width:2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <span style="font-size:14px; color:var(--text)">Interactive key generator &amp; tracker</span>
+          </div>
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <svg style="width:20px; height:20px; stroke:var(--purple-light); fill:none; stroke-width:2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <span style="font-size:14px; color:var(--text)">Live status logs &amp; round-robin telemetry</span>
+          </div>
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <svg style="width:20px; height:20px; stroke:var(--purple-light); fill:none; stroke-width:2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <span style="font-size:14px; color:var(--text)">On-demand authentication status tester</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="position: relative; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 20px 40px rgba(0,0,0,0.6);">
+          <img src="dashboard_mockup.png" alt="Suno API Pro Dashboard" style="width: 100%; display: block; filter: saturate(1.1);">
+          <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(0deg, rgba(9,6,15,0.4) 0%, transparent 60%); pointer-events: none;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <div class="divider"></div>
 
 <!-- ============ HOW IT WORKS ============ -->
@@ -828,6 +911,35 @@ nav { top: 40px !important; }
   </div>
 </section>
 
+<!-- ============ INTEGRATION VISUAL SECTION ============ -->
+<section class="section section-glow">
+  <div class="container">
+    <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items: center;">
+      <div>
+        <div style="position: relative; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 20px 40px rgba(0,0,0,0.6);">
+          <img src="api_flow_illustration.png" alt="Suno API Integration" style="width: 100%; display: block; filter: saturate(1.15);">
+          <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(0deg, rgba(9,6,15,0.4) 0%, transparent 60%); pointer-events: none;"></div>
+        </div>
+      </div>
+      <div>
+        <span class="badge">🚀 SCALABLE DEPLOYMENT</span>
+        <h2 style="margin-top:12px; font-size: 28px; line-height: 1.3;">Integrate Into <span>Any Tech Stack</span></h2>
+        <p style="color:var(--text-muted); margin: 16px 0 24px; line-height: 1.7;">Whether you are building a SaaS, automating your social media channels, or launching custom bots on Discord/Telegram, Suno API Pro handles the heavy lifting. Send simple POST requests, receive live webhooks, and let the gateway manage keep-alives and session refreshes automatically.</p>
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <svg style="width:20px; height:20px; stroke:var(--orange-light); fill:none; stroke-width:2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <span style="font-size:14px; color:var(--text)">Speaks standard JSON — no complex SDKs</span>
+          </div>
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <svg style="width:20px; height:20px; stroke:var(--orange-light); fill:none; stroke-width:2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <span style="font-size:14px; color:var(--text)">Round-robin load balancing prevents limits</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <div class="divider"></div>
 
 <!-- ============ WHAT'S INSIDE ============ -->
@@ -928,6 +1040,37 @@ nav { top: 40px !important; }
     </div>
   </div>
 </section>
+
+<!-- ============ CREATIVE MUSIC VISUAL SECTION ============ -->
+<section class="section section-glow">
+  <div class="container">
+    <div style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 40px; align-items: center;">
+      <div>
+        <span class="badge">🎵 CREATIVE FREEDOM</span>
+        <h2 style="margin-top:12px; font-size: 28px; line-height: 1.3;">Unleash the Power of <span>Automated Music</span></h2>
+        <p style="color:var(--text-muted); margin: 16px 0 24px; line-height: 1.7;">Generate studio-grade audio tracks automatically using Suno's v3 models. From game soundtracks to podcast intros, Suno API Pro handles batch requests flawlessly. Let your systems request music based on real-time triggers, and dynamically fetch the generated audio clips instantly.</p>
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <svg style="width:20px; height:20px; stroke:var(--purple-light); fill:none; stroke-width:2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <span style="font-size:14px; color:var(--text)">Supports high-quality stereo output format</span>
+          </div>
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <svg style="width:20px; height:20px; stroke:var(--purple-light); fill:none; stroke-width:2" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <span style="font-size:14px; color:var(--text)">Batch process up to 10 prompt generations in parallel</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="position: relative; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 20px 40px rgba(0,0,0,0.6);">
+          <img src="music_generation_visual.png" alt="Creative Music Generation" style="width: 100%; display: block; filter: saturate(1.1);">
+          <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(0deg, rgba(9,6,15,0.4) 0%, transparent 60%); pointer-events: none;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
 
 <section class="section section-glow section-dots">
   <div class="container">
